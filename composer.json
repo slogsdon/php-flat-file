@@ -1,0 +1,26 @@
+{
+    "name": "slogsdon/flat-file",
+    "description": "",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shane Logsdon",
+            "email": "shane@shanelogsdon.com"
+        }
+    ],
+    "require": {
+        "league/commonmark": "^0.17.5",
+        "spatie/yaml-front-matter": "^2.0",
+        "symfony/console": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "FlatFile\\": "src/"
+        },
+        "files": [
+            "src/Functions/content.php"
+        ]
+    },
+    "bin": ["bin/flat-file"]
+}
