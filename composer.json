@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": "~7.0",
         "league/commonmark": "^0.17.5",
         "spatie/yaml-front-matter": "^2.0",
         "symfony/console": "^4.1"
