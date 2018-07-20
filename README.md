@@ -1,8 +1,27 @@
 # flat-file
 
-## Getting Started
+> Fast static-site generator / flat-file CMS
 
-> Example `composer.json`
+### Features
+
+- Needs zero configuration
+- Uses Markdown, HTML, or PHP
+- Routes based on file system
+- Exports static sites, or runs via PHP powered web servers
+- Includes development environment
+
+### Reasoning
+
+PHP is easy to install, if not already present on you computer. PHP runs pretty much everywhere. PHP is flexible.
+
+This project also scratches an itch to see how much PHP can handle in this problem domain.
+
+## Requirements
+
+- [PHP 7+](http://www.php.net/)
+- [Composer](https://getcomposer.org/)
+
+## Getting Started
 
 ```json
 {
@@ -31,11 +50,17 @@ composer install
 
 Next, your individual pages need to be included in a `pages` directory at the root of your project (i.e. next to your `composer.json` file). Pages can be written in Markdown (with the `.md` or `.markdown` file extension), plain HTML, or PHP (with the `.php` file extension). PHP files have the option of outputing the content as normal (echo, print, content outside of `<?php ?>` tags, etc.) or returning the content as a string (`<?php return 'hello world';`).
 
-> `pages/index.php`
 
 ```php
-<?php /* hello */ ?>
+<?php /* pages/index.php */ ?>
 <h1>Hello World</h1>
+```
+
+Add more pages with new files under `pages`, e.g.:
+
+```md
+<!-- pages/about.md -->
+# About
 ```
 
 Ready to test? Spin up the development server:
@@ -57,10 +82,18 @@ Ignoring Composer's `vendor` directory, you should see something similar to belo
 ├── composer.json
 ├── composer.lock
 ├── dist
+│   ├── about.html
 │   └── index.html
 ├── pages
 └── vendor
 ```
+
+## F.A.Q.
+
+<dl>
+  <dt>What about LiveReload like functionality?</dt>
+  <dd>That's being investigated, but use `F5`/`Cmd-R` for the time being.</dd>
+</dl>
 
 ## License
 

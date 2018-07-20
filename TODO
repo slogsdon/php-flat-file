@@ -1,0 +1,11 @@
+- copy static files to build destination
+- document using `public/index.php` for production
+- add tests
+- add layout/template for HTML wrapper code
+- use yaml data
+- add component helper for includes?
+- create example project with `now`
+- create composer create-project template
+- unify common tasks in commands via library classes
+- investigate livereload
+- create mini-admin as separate package
