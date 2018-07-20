@@ -15,6 +15,10 @@ class BuildCommand extends Command
     protected $input;
     /** @var OutputInterface */
     protected $output;
+    /** @var Application */
+    protected $app;
+    /** @var array */
+    protected $pages;
 
     protected function configure()
     {
@@ -36,8 +40,26 @@ class BuildCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
+        $this->app = new Application(['noRun' => true]);
 
-        $app = new Application(['noRun' => true]);
+        $this
+            ->discoverRoutes()
+            ->generateFiles();
+
+        $this->output->writeln('Finished');
+    }
+
+    protected function discoverRoutes()
+    {
+        $this->output->writeln('Discovering routes...');
+        $this->pages = $this->app->findPages();
+        return $this;
+    }
+
+    protected function generateFiles()
+    {
+        $this->output->writeln('Generating files...');
+
         $destination = sprintf(
             '%s/%s',
             getcwd(),
@@ -50,17 +72,14 @@ class BuildCommand extends Command
 
         $destination = realpath($destination);
 
-        $this->output->writeln('Discovering routes...');
-        $pages = $app->findPages();
-        $this->output->writeln('Writing files...');
 
-        foreach ($pages as $page) {
+        foreach ($this->pages as $page) {
             if ($page['slug'] === 'index') {
                 $page['slug'] = '';
             }
 
-            $app->setOption('requestUri', '/' . $page['slug']);
-            list(,$content) = $app->getContent();
+            $this->app->setOption('requestUri', '/' . $page['slug']);
+            list(,$content) = $this->app->getContent();
             $localDest = sprintf(
                 '%s/%s',
                 $destination,
@@ -73,8 +92,6 @@ class BuildCommand extends Command
 
             file_put_contents($localDest . '/index.html', $content);
         }
-
-        $this->output->writeln('Finished');
     }
 
     protected function getDestination()
