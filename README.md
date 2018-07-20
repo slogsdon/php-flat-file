@@ -2,6 +2,8 @@
 
 > Fast static-site generator / flat-file CMS
 
+[View an example project.](https://github.com/slogsdon/php-flat-file-example)
+
 ### Features
 
 - Needs zero configuration
