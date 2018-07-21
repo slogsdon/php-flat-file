@@ -83,7 +83,11 @@ class Application
             case 'md':
             case 'markdown':
                 return function () use ($file) {
-                    return markdown(file_get_contents($file->getPathName()));
+                    $contents = file_get_contents($file->getPathName());
+                    if (false === $contents) {
+                        return '';
+                    }
+                    return markdown($contents);
                 };
             case 'php':
             default:
