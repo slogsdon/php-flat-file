@@ -52,16 +52,20 @@ class Application
     public function findPages(): array
     {
         $files = [];
-        $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages') . '/';
+        $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
 
-        foreach ($this->generatePageFiles($root) as $file) {
-            $slug = $this->getSlug($root, $file);
-            $files[$slug] = [
-                'info'=> $file,
-                'content' => $this->buildContentFunction($file),
-                'slug' => $slug,
-                'depth' => count(explode('/', $slug)),
-            ];
+        if ($root) {
+            $root .=  '/';
+
+            foreach ($this->generatePageFiles($root) as $file) {
+                $slug = $this->getSlug($root, $file);
+                $files[$slug] = [
+                    'info'=> $file,
+                    'content' => $this->buildContentFunction($file),
+                    'slug' => $slug,
+                    'depth' => count(explode('/', $slug)),
+                ];
+            }
         }
 
         return $files;
@@ -119,7 +123,7 @@ class Application
         yield from $this->files->findAll($root);
     }
 
-    protected function getOption(string $key): ?string
+    public function getOption(string $key)
     {
         return isset($this->options[$key]) ? $this->options[$key] : null;
     }
