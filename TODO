@@ -1,4 +1,3 @@
-- copy static files to build destination
 - document using `public/index.php` for production
 - add tests
 - add layout/template for HTML wrapper code
