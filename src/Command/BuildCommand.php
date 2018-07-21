@@ -3,18 +3,19 @@
 namespace FlatFile\Command;
 
 use FlatFile\Application;
-use Symfony\Component\Console\Command\Command;
+use FlatFile\Files;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BuildCommand extends Command
+class BuildCommand extends BaseCommand
 {
-    /** @var InputInterface */
-    protected $input;
-    /** @var OutputInterface */
-    protected $output;
+    /** @var string */
+    protected $name = 'build';
+    /** @var string */
+    protected $description = 'Builds the site';
+
     /** @var Application */
     protected $app;
     /** @var array */
@@ -22,9 +23,9 @@ class BuildCommand extends Command
 
     protected function configure()
     {
+        parent::configure();
+
         $this
-            ->setName('build')
-            ->setDescription('Builds the site')
             ->addArgument('destination', InputArgument::OPTIONAL, 'Directory to save build files')
             ->addOption(
                 'destination',
@@ -38,13 +39,14 @@ class BuildCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
+        parent::execute($input, $output);
+
         $this->app = new Application(['noRun' => true]);
 
         $this
             ->discoverRoutes()
-            ->generateFiles();
+            ->generateFiles()
+            ->copyStaticAssets();
 
         $this->output->writeln('Finished');
     }
@@ -60,29 +62,15 @@ class BuildCommand extends Command
     {
         $this->output->writeln('Generating files...');
 
-        $destination = sprintf(
-            '%s/%s',
-            getcwd(),
-            $this->getDestination()
-        ) . '/';
-
-        if (!is_dir($destination)) {
-            mkdir($destination, 0777, true);
-        }
-
-        $destination = realpath($destination);
-
-
         foreach ($this->pages as $page) {
             if ($page['slug'] === 'index') {
                 $page['slug'] = '';
             }
 
-            $this->app->setOption('requestUri', '/' . $page['slug']);
-            list(,$content) = $this->app->getContent();
+            list(,$content) = $this->app->getContentFor($page['slug']);
             $localDest = sprintf(
                 '%s/%s',
-                $destination,
+                $this->getDestination(),
                 $page['slug']
             );
 
@@ -92,10 +80,38 @@ class BuildCommand extends Command
 
             file_put_contents($localDest . '/index.html', $content);
         }
+
+        return $this;
+    }
+
+    protected function copyStaticAssets()
+    {
+        $public = getcwd() . '/public';
+        if (is_dir($public)) {
+            $this->output->writeln('Copying public files...');
+
+            $files = new Files;
+            foreach ($files->findAll($public) as $file) {
+                $path = str_replace($public, '', $file->getPathName());
+                copy($file->getPathName(), $this->getDestination() . $path);
+            }
+        }
+
+        return $this;
     }
 
     protected function getDestination()
     {
-        return $this->input->getArgument('destination') ?: $this->input->getOption('destination');
+        $destination = sprintf(
+            '%s/%s',
+            getcwd(),
+            $this->input->getArgument('destination') ?: $this->input->getOption('destination')
+        ) . '/';
+
+        if (!is_dir($destination)) {
+            mkdir($destination, 0777, true);
+        }
+
+        return realpath($destination);
     }
 }

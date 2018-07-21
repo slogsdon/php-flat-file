@@ -105,6 +105,32 @@ Ignoring Composer's `vendor` directory, you should see something similar to belo
 └── vendor
 ```
 
+### Using a Custom Entrypoint
+
+By default, we provide an entrypoint for the webserver to use when serving requests. It completes some rewrites for files in `public`, requires the Composer autoloader, and kicks off the application. You can elect to include your own by creating a new entrypoint named `index.php` and put it in the `public` directory at the root of your project. Here's the default one for reference:
+
+```php
+<?php declare(strict_types=1);
+
+$uri = $_SERVER['REQUEST_URI'];
+
+if ($uri !== '/' && file_exists(getcwd() . '/public' . $uri)) {
+    return false;
+}
+
+require getcwd() . '/vendor/autoload.php';
+new FlatFile\Application;
+```
+
+### Running as a Flat-File CMS
+
+If you wish to run your project with a PHP-enabled web server as a flat-file CMS instead of a static site, you'll want to:
+
+1. Configure your web root to be `public`
+2. Use a custom entrypoint or configure your web server to have `vendor/slogsdon/flat-file/src/router.php` serve any non-existent paths.
+
+Your web server will then be able to serve static assets from `public` as it normally would and also any pages you create.
+
 ## F.A.Q.
 
 <dl>
