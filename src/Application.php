@@ -118,7 +118,7 @@ class Application
         return [404, 'not found'];
     }
 
-    protected function generatePageFiles(string $root)
+    protected function generatePageFiles(string $root): iterable
     {
         yield from $this->files->findAll($root);
     }
