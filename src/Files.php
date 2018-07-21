@@ -4,7 +4,7 @@ namespace FlatFile;
 
 class Files
 {
-    public function findAll(string $root)
+    public function findAll(string $root): iterable
     {
         $dir = new \RecursiveDirectoryIterator($root);
         $ite = new \RecursiveIteratorIterator($dir);

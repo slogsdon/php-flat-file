@@ -52,16 +52,20 @@ class Application
     public function findPages(): array
     {
         $files = [];
-        $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages') . '/';
+        $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
 
-        foreach ($this->generatePageFiles($root) as $file) {
-            $slug = $this->getSlug($root, $file);
-            $files[$slug] = [
-                'info'=> $file,
-                'content' => $this->buildContentFunction($file),
-                'slug' => $slug,
-                'depth' => count(explode('/', $slug)),
-            ];
+        if ($root) {
+            $root .=  '/';
+
+            foreach ($this->generatePageFiles($root) as $file) {
+                $slug = $this->getSlug($root, $file);
+                $files[$slug] = [
+                    'info'=> $file,
+                    'content' => $this->buildContentFunction($file),
+                    'slug' => $slug,
+                    'depth' => count(explode('/', $slug)),
+                ];
+            }
         }
 
         return $files;
@@ -79,7 +83,11 @@ class Application
             case 'md':
             case 'markdown':
                 return function () use ($file) {
-                    return markdown(file_get_contents($file->getPathName()));
+                    $contents = file_get_contents($file->getPathName());
+                    if (false === $contents) {
+                        return '';
+                    }
+                    return markdown($contents);
                 };
             case 'php':
             default:
@@ -114,12 +122,12 @@ class Application
         return [404, 'not found'];
     }
 
-    protected function generatePageFiles(string $root)
+    protected function generatePageFiles(string $root): iterable
     {
         yield from $this->files->findAll($root);
     }
 
-    protected function getOption(string $key): ?string
+    public function getOption(string $key)
     {
         return isset($this->options[$key]) ? $this->options[$key] : null;
     }

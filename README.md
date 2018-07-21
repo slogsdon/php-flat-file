@@ -20,7 +20,7 @@ This project also scratches an itch to see how much PHP can handle in this probl
 
 ## Requirements
 
-- [PHP 7+](http://www.php.net/)
+- [PHP 7.1+](http://www.php.net/)
 - [Composer](https://getcomposer.org/)
 
 ## Getting Started
