@@ -13,17 +13,20 @@ class Application
     private $options;
     /** @var array */
     private $pages;
+    /** @var Files */
+    private $files;
 
     public function __construct(array $options = [])
     {
         $this->options = $options;
+        $this->files = new Files;
         $this->pages = $this->findPages();
 
         if (isset($options['noRun']) && true === $options['noRun']) {
             return;
         }
 
-        list($status, $content) = $this->getContent();
+        list($status, $content) = $this->getRequestedContent();
         http_response_code($status);
         $this->logAccess();
         print $content;
@@ -40,7 +43,7 @@ class Application
         return __DIR__ . '/router.php';
     }
 
-    public function setOption(string $key, $value)
+    public function setOption(string $key, $value): self
     {
         $this->options[$key] = $value;
         return $this;
@@ -54,7 +57,7 @@ class Application
         foreach ($this->generatePageFiles($root) as $file) {
             $slug = $this->getSlug($root, $file);
             $files[$slug] = [
-                'spi'=> $file,
+                'info'=> $file,
                 'content' => $this->buildContentFunction($file),
                 'slug' => $slug,
                 'depth' => count(explode('/', $slug)),
@@ -62,6 +65,12 @@ class Application
         }
 
         return $files;
+    }
+
+    public function getContentFor(string $slug): array
+    {
+        $this->setOption('requestUri', '/' . trim($slug, '/'));
+        return $this->getRequestedContent();
     }
 
     protected function buildContentFunction(\SplFileInfo $file)
@@ -86,7 +95,7 @@ class Application
         }
     }
 
-    public function getContent(): array
+    public function getRequestedContent(): array
     {
         $rawUri =
             isset($_SERVER['REQUEST_URI'])
@@ -107,15 +116,7 @@ class Application
 
     protected function generatePageFiles(string $root)
     {
-        $dir = new \RecursiveDirectoryIterator($root);
-        $ite = new \RecursiveIteratorIterator($dir);
-        $fileIterator = new \RegexIterator($ite, '/[^\/]*/');
-        foreach ($fileIterator as $file) {
-            if ($file->getFileName() === '.' || $file->getFileName() === '..') {
-                continue;
-            }
-            yield $file;
-        }
+        yield from $this->files->findAll($root);
     }
 
     protected function getOption(string $key): ?string
