@@ -3,23 +3,22 @@
 namespace FlatFile\Command;
 
 use FlatFile\Application;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ServeCommand extends Command
+class ServeCommand extends BaseCommand
 {
-    /** @var InputInterface */
-    protected $input;
-    /** @var OutputInterface */
-    protected $output;
+    /** @var string */
+    protected $name = 'serve';
+    /** @var string */
+    protected $description = 'Serves the site';
 
     protected function configure()
     {
+        parent::configure();
+
         $this
-            ->setName('serve')
-            ->setDescription('Serves the site')
             ->addOption(
                 'host',
                 'H',
@@ -39,8 +38,8 @@ class ServeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
+        parent::execute($input, $output);
+
         $this->outputBanner();
         passthru($this->buildCommand());
     }

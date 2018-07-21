@@ -4,18 +4,18 @@ namespace FlatFile\Command;
 
 use FlatFile\Application;
 use FlatFile\Files;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BuildCommand extends Command
+class BuildCommand extends BaseCommand
 {
-    /** @var InputInterface */
-    protected $input;
-    /** @var OutputInterface */
-    protected $output;
+    /** @var string */
+    protected $name = 'build';
+    /** @var string */
+    protected $description = 'Builds the site';
+
     /** @var Application */
     protected $app;
     /** @var array */
@@ -23,9 +23,9 @@ class BuildCommand extends Command
 
     protected function configure()
     {
+        parent::configure();
+
         $this
-            ->setName('build')
-            ->setDescription('Builds the site')
             ->addArgument('destination', InputArgument::OPTIONAL, 'Directory to save build files')
             ->addOption(
                 'destination',
@@ -39,8 +39,8 @@ class BuildCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
+        parent::execute($input, $output);
+
         $this->app = new Application(['noRun' => true]);
 
         $this
