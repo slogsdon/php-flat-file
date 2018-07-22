@@ -108,11 +108,11 @@ class ServeCommand extends BaseCommand
 
     protected function outputBanner()
     {
-        $dt = date(Application::DATETIME_FORMAT);
+        $datetime = date(Application::DATETIME_FORMAT);
         $this->output->writeln(sprintf(
             'PHP %s Development Server started at %s',
             PHP_VERSION,
-            $dt
+            $datetime
         ));
         $this->output->writeln(sprintf(
             'Listening on http://%s:%s',
