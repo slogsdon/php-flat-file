@@ -53,7 +53,7 @@ class Application
 
     public function findPages(): array
     {
-        $pages = [];
+        $foundPages = [];
         $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
 
         if ($root) {
@@ -61,7 +61,7 @@ class Application
 
             foreach ($this->generatePageFiles($root) as $file) {
                 $slug = $this->getSlug($root, $file);
-                $pages[$slug] = (object)[
+                $foundPages[$slug] = (object)[
                     'info'=> $file,
                     'content' => $this->buildContentFunction($file),
                     'slug' => $slug,
@@ -70,7 +70,7 @@ class Application
             }
         }
 
-        return $pages;
+        return $foundPages;
     }
 
     public function getContentFor(string $slug): array
