@@ -8,6 +8,8 @@ class Application
 {
     /** @var string */
     const DATETIME_FORMAT = 'D M j H:i:s Y';
+    /** @var string */
+    const SERVER_REQUEST_URI = 'REQUEST_URI';
 
     /** @var array */
     private $options;
@@ -51,7 +53,7 @@ class Application
 
     public function findPages(): array
     {
-        $files = [];
+        $foundPages = [];
         $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
 
         if ($root) {
@@ -59,7 +61,7 @@ class Application
 
             foreach ($this->generatePageFiles($root) as $file) {
                 $slug = $this->getSlug($root, $file);
-                $files[$slug] = [
+                $foundPages[$slug] = (object)[
                     'info'=> $file,
                     'content' => $this->buildContentFunction($file),
                     'slug' => $slug,
@@ -68,7 +70,7 @@ class Application
             }
         }
 
-        return $files;
+        return $foundPages;
     }
 
     public function getContentFor(string $slug): array
@@ -106,17 +108,17 @@ class Application
     public function getRequestedContent(): array
     {
         $rawUri =
-            isset($_SERVER['REQUEST_URI'])
-            ? $_SERVER['REQUEST_URI']
+            isset($_SERVER[static::SERVER_REQUEST_URI])
+            ? $_SERVER[static::SERVER_REQUEST_URI]
             : $this->getOption('requestUri');
         $requestUri = trim($rawUri, '/');
 
         if (isset($this->pages[$requestUri])) {
-            return [200, $this->pages[$requestUri]['content']()];
+            return [200, $this->pages[$requestUri]->content()];
         }
 
         if ($requestUri === '' && isset($this->pages['index'])) {
-            return [200, $this->pages['index']['content']()];
+            return [200, $this->pages['index']->content()];
         }
 
         return [404, 'not found'];
@@ -146,7 +148,7 @@ class Application
         $remoteAddr = $_SERVER['REMOTE_ADDR'];
         $remotePort = $_SERVER['REMOTE_PORT'];
         $status = http_response_code();
-        $requestUri = $_SERVER['REQUEST_URI'];
+        $requestUri = $_SERVER[static::SERVER_REQUEST_URI];
 
         error_log(sprintf(
             '%s:%s [%s]: %s',

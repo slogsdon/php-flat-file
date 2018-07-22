@@ -12,6 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BuildCommand extends BaseCommand
 {
     /** @var string */
+    const OPTION_DESTINATION = 'destination';
+
+    /** @var string */
     protected $name = 'build';
     /** @var string */
     protected $description = 'Builds the site';
@@ -26,9 +29,9 @@ class BuildCommand extends BaseCommand
         parent::configure();
 
         $this
-            ->addArgument('destination', InputArgument::OPTIONAL, 'Directory to save build files')
+            ->addArgument(static::OPTION_DESTINATION, InputArgument::OPTIONAL, 'Directory to save build files')
             ->addOption(
-                'destination',
+                static::OPTION_DESTINATION,
                 'd',
                 InputOption::VALUE_REQUIRED,
                 'Directory to save build files',
@@ -105,7 +108,7 @@ class BuildCommand extends BaseCommand
         $destination = sprintf(
             '%s/%s',
             getcwd(),
-            $this->input->getArgument('destination') ?: $this->input->getOption('destination')
+            $this->input->getArgument(static::OPTION_DESTINATION) ?: $this->input->getOption(static::OPTION_DESTINATION)
         ) . '/';
 
         if (!is_dir($destination)) {
