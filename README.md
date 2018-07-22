@@ -1,8 +1,16 @@
 # flat-file
 
+[![Latest Stable Version](https://poser.pugx.org/slogsdon/flat-file/v/stable)](https://packagist.org/packages/slogsdon/flat-file)
+[![Total Downloads](https://poser.pugx.org/slogsdon/flat-file/downloads)](https://packagist.org/packages/slogsdon/flat-file) 
+[![Latest Unstable Version](https://poser.pugx.org/slogsdon/flat-file/v/unstable)](https://packagist.org/packages/slogsdon/flat-file)
+[![License](https://poser.pugx.org/slogsdon/flat-file/license)](https://packagist.org/packages/slogsdon/flat-file)
+[![Build Status](https://travis-ci.com/slogsdon/php-flat-file.svg?branch=master)](https://travis-ci.com/slogsdon/php-flat-file)
+[![Maintainability](https://api.codeclimate.com/v1/badges/953549537e6505fdd83d/maintainability)](https://codeclimate.com/github/slogsdon/php-flat-file/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/953549537e6505fdd83d/test_coverage)](https://codeclimate.com/github/slogsdon/php-flat-file/test_coverage)
+
 > Fast static-site generator / flat-file CMS
 
-[View an example project.](https://github.com/slogsdon/php-flat-file-example)
+[View an example project.](https://github.com/slogsdon/php-flat-file-starter)
 
 ### Features
 

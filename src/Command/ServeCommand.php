@@ -33,6 +33,12 @@ class ServeCommand extends BaseCommand
                 'The listening port',
                 '3000'
             )
+            ->addOption(
+                'dry-run',
+                null,
+                InputOption::VALUE_NONE,
+                'Does not run server. Outputs command instead'
+            )
         ;
     }
 
@@ -40,8 +46,15 @@ class ServeCommand extends BaseCommand
     {
         parent::execute($input, $output);
 
+        $command = $this->buildCommand();
+
+        if ($this->input->getOption('dry-run')) {
+            $this->output->writeln($command);
+            return;
+        }
+
         $this->outputBanner();
-        passthru($this->buildCommand());
+        passthru($command);
     }
 
     protected function buildCommand(): string
