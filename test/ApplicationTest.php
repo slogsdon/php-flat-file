@@ -7,6 +7,13 @@ use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase
 {
+    /** @var string */
+    const EXPECTED_CONTENT = "<h1>content</h1>\n";
+    /** @var string */
+    const APP_OPTION_PAGES_PATH = 'pagesPath';
+    /** @var string */
+    const FIXTURES_PATH_SITE = '/fixtures/site';
+
     /** @var Application */
     protected $app;
 
@@ -37,7 +44,7 @@ class ApplicationTest extends TestCase
     {
         $this->assertEquals([], $this->app->findPages());
 
-        $this->app->setOption('pagesPath', __DIR__);
+        $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__);
         $this->assertNotEquals([], $this->app->findPages());
     }
 
@@ -46,5 +53,35 @@ class ApplicationTest extends TestCase
         list($status, $body) = $this->app->getContentFor('/');
         $this->assertEquals(404, $status);
         $this->assertEquals('not found', $body);
+    }
+    
+    public function testPhpEchoContent()
+    {
+        $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
+        $pages = $this->app->findPages();
+        $this->assertNotEquals([], $pages);
+        
+        $body = $pages['echos-content']->content->call($this->app);
+        $this->assertEquals(static::EXPECTED_CONTENT, $body);
+    }
+
+    public function testPhpReturnContent()
+    {
+        $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
+        $pages = $this->app->findPages();
+        $this->assertNotEquals([], $pages);
+
+        $body = $pages['returns-content']->content->call($this->app);
+        $this->assertEquals(static::EXPECTED_CONTENT, $body);
+    }
+
+    public function testMarkdownContent()
+    {
+        $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
+        $pages = $this->app->findPages();
+        $this->assertNotEquals([], $pages);
+
+        $body = $pages['markdown-content']->content->call($this->app);
+        $this->assertEquals(static::EXPECTED_CONTENT, $body);
     }
 }

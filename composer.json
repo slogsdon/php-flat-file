@@ -37,7 +37,7 @@
     "scripts": {
       "test": [
         "phpcs",
-        "phpstan analyze src --level=max --no-progress -vvv",
+        "phpstan analyze src test --level=max --no-progress -vvv",
         "phpunit"
       ]
     }

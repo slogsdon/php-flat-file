@@ -114,11 +114,11 @@ class Application
         $requestUri = trim($rawUri, '/');
 
         if (isset($this->pages[$requestUri])) {
-            return [200, $this->pages[$requestUri]->content()];
+            return [200, $this->pages[$requestUri]->content->call($this)];
         }
 
         if ($requestUri === '' && isset($this->pages['index'])) {
-            return [200, $this->pages['index']->content()];
+            return [200, $this->pages['index']->content->call($this)];
         }
 
         return [404, 'not found'];
