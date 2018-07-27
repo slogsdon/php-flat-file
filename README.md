@@ -1,7 +1,7 @@
 # flat-file
 
 [![Latest Stable Version](https://poser.pugx.org/slogsdon/flat-file/v/stable)](https://packagist.org/packages/slogsdon/flat-file)
-[![Total Downloads](https://poser.pugx.org/slogsdon/flat-file/downloads)](https://packagist.org/packages/slogsdon/flat-file) 
+[![Total Downloads](https://poser.pugx.org/slogsdon/flat-file/downloads)](https://packagist.org/packages/slogsdon/flat-file)
 [![Latest Unstable Version](https://poser.pugx.org/slogsdon/flat-file/v/unstable)](https://packagist.org/packages/slogsdon/flat-file)
 [![License](https://poser.pugx.org/slogsdon/flat-file/license)](https://packagist.org/packages/slogsdon/flat-file)
 [![Build Status](https://travis-ci.com/slogsdon/php-flat-file.svg?branch=master)](https://travis-ci.com/slogsdon/php-flat-file)
@@ -77,7 +77,7 @@ Next, your individual pages need to be included in a `pages` directory at the ro
 
 Add more pages with new files under `pages`, e.g.:
 
-```md
+```markdown
 <!-- pages/about.md -->
 # About
 ```
