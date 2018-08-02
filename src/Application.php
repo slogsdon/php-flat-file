@@ -28,27 +28,9 @@ class Application
             return;
         }
 
-        list($status, $content) = $this->getRequestedContent();
-        http_response_code($status);
-        $this->logAccess();
-        print $content;
-    }
-
-    public static function resolveRouter(): string
-    {
-        $publicIndex = getcwd() . '/public/index.php';
-
-        if (is_file($publicIndex)) {
-            return $publicIndex;
-        }
-
-        return __DIR__ . '/router.php';
-    }
-
-    public function setOption(string $key, $value): self
-    {
-        $this->options[$key] = $value;
-        return $this;
+        $this->outputResult(
+            $this->getRequestedContent()
+        );
     }
 
     public function findPages(): array
@@ -79,6 +61,50 @@ class Application
         return $this->getRequestedContent();
     }
 
+    public function getRequestedContent(): array
+    {
+        $rawUri =
+            isset($_SERVER[static::SERVER_REQUEST_URI])
+            ? $_SERVER[static::SERVER_REQUEST_URI]
+            : $this->getOption('requestUri');
+        $requestUri = trim($rawUri, '/');
+
+        if (isset($this->pages[$requestUri])) {
+            return [200, $this->pages[$requestUri]->content->call($this)];
+        }
+
+        if ($requestUri === '' && isset($this->pages['index'])) {
+            return [200, $this->pages['index']->content->call($this)];
+        }
+
+        return [404, 'not found'];
+    }
+
+    public function outputResult(array $result): void
+    {
+        list($status, $content) = $result;
+        http_response_code($status);
+        $this->logAccess();
+        print $content;
+    }
+
+    public static function resolveRouter(): string
+    {
+        $publicIndex = getcwd() . '/public/index.php';
+
+        if (is_file($publicIndex)) {
+            return $publicIndex;
+        }
+
+        return __DIR__ . '/router.php';
+    }
+
+    public function setOption(string $key, $value): self
+    {
+        $this->options[$key] = $value;
+        return $this;
+    }
+
     protected function buildContentFunction(\SplFileInfo $file)
     {
         switch (strtolower($file->getExtension())) {
@@ -103,25 +129,6 @@ class Application
                         : $required;
                 };
         }
-    }
-
-    public function getRequestedContent(): array
-    {
-        $rawUri =
-            isset($_SERVER[static::SERVER_REQUEST_URI])
-            ? $_SERVER[static::SERVER_REQUEST_URI]
-            : $this->getOption('requestUri');
-        $requestUri = trim($rawUri, '/');
-
-        if (isset($this->pages[$requestUri])) {
-            return [200, $this->pages[$requestUri]->content->call($this)];
-        }
-
-        if ($requestUri === '' && isset($this->pages['index'])) {
-            return [200, $this->pages['index']->content->call($this)];
-        }
-
-        return [404, 'not found'];
     }
 
     protected function generatePageFiles(string $root): iterable
