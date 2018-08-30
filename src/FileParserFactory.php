@@ -6,6 +6,9 @@ use FlatFile\FileParser\FileParserInterface;
 use FlatFile\FileParser\MarkdownFileParser;
 use FlatFile\FileParser\PhpFileParser;
 
+/**
+ * Obtains correct file parser based on file attributes
+ */
 class FileParserFactory
 {
     /** @var array */

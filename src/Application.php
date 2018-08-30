@@ -6,20 +6,61 @@ use function FlatFile\Functions\markdown;
 
 class Application
 {
-    /** @var string */
+    /**
+     * Preferred datetime format. Mirrors format used by PHP's
+     * built-in web server.
+     *
+     * @var string
+     */
     const DATETIME_FORMAT = 'D M j H:i:s Y';
-    /** @var string */
+
+    /**
+     * Request URI index on `$_SERVER` superglobal
+     *
+     * @var string
+     */
     const SERVER_REQUEST_URI = 'REQUEST_URI';
 
-    /** @var array */
+    /**
+     * Current instance options
+     *
+     * @var array
+     */
     private $options;
-    /** @var array */
+
+    /**
+     * Application's discovered page objects
+     *
+     * @var array
+     */
     private $pages;
-    /** @var Files */
+
+    /**
+     * Filesystem helper
+     *
+     * @var Files
+     */
     private $files;
-    /** @var FileParserFactory */
+
+    /**
+     * Obtains correct file parser based on file attributes
+     *
+     * @var FileParserFactory
+     */
     private $fileParserFactory;
 
+    /**
+     * Create a new application instance
+     *
+     * ### Options
+     *
+     * - `pagesPage` - Preferred directory containing site pages
+     * - `requestUri` - Fallback request URI when `$_SERVER['REQUEST_URI']`
+     *     is not set
+     * - `noRun` - Skip default output of page matching `requestUri`
+     *
+     * @param array $options See above for available options
+     */
     public function __construct(array $options = [])
     {
         $this->options = $options;
@@ -27,6 +68,7 @@ class Application
         $this->fileParserFactory = new FileParserFactory;
         $this->pages = $this->findPages();
 
+        // QUESTION: Should this be inverted?
         if (isset($options['noRun']) && true === $options['noRun']) {
             return;
         }
@@ -36,6 +78,12 @@ class Application
         );
     }
 
+    /**
+     * Produces array of page objects from discovered pages,
+     * indexed by slug
+     *
+     * @return array
+     */
     public function findPages(): array
     {
         $foundPages = [];
@@ -58,6 +106,13 @@ class Application
         return $foundPages;
     }
 
+    /**
+     * Helper function to set `requestUri` option and get
+     * result for supplied `$slug`
+     *
+     * @param string $slug Desired page slug to retrieve
+     * @return array
+     */
     public function getContentFor(string $slug): array
     {
         $this->setOption('requestUri', '/' . trim($slug, '/'));
