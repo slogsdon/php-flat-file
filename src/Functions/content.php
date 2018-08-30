@@ -13,5 +13,8 @@ function markdown(string $markdown)
     }
 
     $content = YamlFrontMatter::parse($markdown);
-    return $converter->convertToHtml($content->body());
+    return (object)[
+        'content' => $converter->convertToHtml($content->body()),
+        'meta' => $content->matter(),
+    ];
 }

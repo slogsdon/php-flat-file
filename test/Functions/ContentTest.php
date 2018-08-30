@@ -10,7 +10,7 @@ class ContentTest extends TestCase
     public function testMarkdownSucceeds()
     {
         $expected = "<h1>hello</h1>\n";
-        $actual = markdown('# hello');
+        $actual = markdown('# hello')->content;
         $this->assertEquals($expected, $actual);
     }
 }

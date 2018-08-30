@@ -54,15 +54,15 @@ class ApplicationTest extends TestCase
         $this->assertEquals(404, $status);
         $this->assertEquals('not found', $body);
     }
-    
+
     public function testPhpEchoContent()
     {
         $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
         $pages = $this->app->findPages();
         $this->assertNotEquals([], $pages);
-        
+
         $body = $pages['echos-content']->content->call($this->app);
-        $this->assertEquals(static::EXPECTED_CONTENT, $body);
+        $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 
     public function testPhpReturnContent()
@@ -72,7 +72,7 @@ class ApplicationTest extends TestCase
         $this->assertNotEquals([], $pages);
 
         $body = $pages['returns-content']->content->call($this->app);
-        $this->assertEquals(static::EXPECTED_CONTENT, $body);
+        $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 
     public function testMarkdownContent()
@@ -82,6 +82,6 @@ class ApplicationTest extends TestCase
         $this->assertNotEquals([], $pages);
 
         $body = $pages['markdown-content']->content->call($this->app);
-        $this->assertEquals(static::EXPECTED_CONTENT, $body);
+        $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 }

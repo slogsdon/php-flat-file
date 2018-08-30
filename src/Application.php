@@ -17,11 +17,14 @@ class Application
     private $pages;
     /** @var Files */
     private $files;
+    /** @var FileParserFactory */
+    private $fileParserFactory;
 
     public function __construct(array $options = [])
     {
         $this->options = $options;
         $this->files = new Files;
+        $this->fileParserFactory = new FileParserFactory;
         $this->pages = $this->findPages();
 
         if (isset($options['noRun']) && true === $options['noRun']) {
@@ -107,28 +110,10 @@ class Application
 
     protected function buildContentFunction(\SplFileInfo $file)
     {
-        switch (strtolower($file->getExtension())) {
-            case 'md':
-            case 'markdown':
-                return function () use ($file) {
-                    $contents = file_get_contents($file->getPathName());
-                    if (false === $contents) {
-                        return '';
-                    }
-                    return markdown($contents);
-                };
-            case 'php':
-            default:
-                return function () use ($file) {
-                    ob_start();
-                    $required = include $file->getPathName();
-                    $output = ob_get_clean();
-
-                    return ($required === 1)
-                        ? $output
-                        : $required;
-                };
-        }
+        $parser = $this->fileParserFactory->createFrom($file);
+        return function () use ($parser, $file) {
+            return $parser->parse($file);
+        };
     }
 
     protected function generatePageFiles(string $root): iterable

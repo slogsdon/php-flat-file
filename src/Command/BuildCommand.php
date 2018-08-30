@@ -66,15 +66,15 @@ class BuildCommand extends BaseCommand
         $this->output->writeln('Generating files...');
 
         foreach ($this->pages as $page) {
-            if ($page['slug'] === 'index') {
-                $page['slug'] = '';
+            if ($page->slug === 'index') {
+                $page->slug = '';
             }
 
-            list(,$content) = $this->app->getContentFor($page['slug']);
+            list(,$content) = $this->app->getContentFor($page->slug);
             $localDest = sprintf(
                 '%s/%s',
                 $this->getDestination(),
-                $page['slug']
+                $page->slug
             );
 
             if (!is_dir($localDest)) {
