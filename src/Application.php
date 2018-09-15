@@ -143,7 +143,7 @@ class Application
         list($status, $content) = $result;
         http_response_code($status);
         $this->logAccess();
-        print $content;
+        print $content->content;
     }
 
     public static function resolveRouter(): string

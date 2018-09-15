@@ -81,7 +81,7 @@ class BuildCommand extends BaseCommand
                 mkdir($localDest, 0777, true);
             }
 
-            file_put_contents($localDest . '/index.html', $content);
+            file_put_contents($localDest . '/index.html', $content->content);
         }
 
         return $this;

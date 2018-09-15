@@ -14,7 +14,7 @@ class PhpFileParser extends FileParserAbstract
             'content' => ($required === 1)
                 ? $output
                 : $required,
-            'meta' => null,
+            'meta' => [],
         ];
     }
 
