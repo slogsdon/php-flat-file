@@ -6,7 +6,7 @@ use function FlatFile\Functions\markdown;
 
 class MarkdownFileParser extends FileParserAbstract
 {
-    public function parse(\SplFileInfo $file): object
+    public function parse(\SplFileInfo $file): \stdClass
     {
         $contents = file_get_contents($file->getPathName());
         if (false === $contents) {
@@ -17,6 +17,7 @@ class MarkdownFileParser extends FileParserAbstract
         }
         return markdown($contents);
     }
+
     public function supportedFileExtensions(): array
     {
         return ['md', 'markdown'];

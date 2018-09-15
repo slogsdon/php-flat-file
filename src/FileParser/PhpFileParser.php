@@ -4,7 +4,7 @@ namespace FlatFile\FileParser;
 
 class PhpFileParser extends FileParserAbstract
 {
-    public function parse(\SplFileInfo $file): object
+    public function parse(\SplFileInfo $file): \stdClass
     {
         ob_start();
         $required = include $file->getPathName();
@@ -17,6 +17,7 @@ class PhpFileParser extends FileParserAbstract
             'meta' => null,
         ];
     }
+
     public function supportedFileExtensions(): array
     {
         return ['php'];
