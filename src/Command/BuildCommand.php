@@ -96,14 +96,14 @@ class BuildCommand extends BaseCommand
             $files = new Files;
             foreach ($files->findAll($public) as $file) {
                 $path = str_replace($public, '', $file->getPathName());
-                copy($file->getPathName(), $this->getDestination() . $path);
+                copy($file->getPathName(), $this->getDestination($path, $file->isFile()));
             }
         }
 
         return $this;
     }
 
-    protected function getDestination()
+    protected function getDestination(string $path = '', bool $isFile = false)
     {
         $destination = sprintf(
             '%s/%s',
@@ -111,10 +111,18 @@ class BuildCommand extends BaseCommand
             $this->input->getArgument(static::OPTION_DESTINATION) ?: $this->input->getOption(static::OPTION_DESTINATION)
         ) . '/';
 
-        if (!is_dir($destination)) {
-            mkdir($destination, 0777, true);
+        if (!empty($path)) {
+            $destination .= trim($path, '/');
         }
 
-        return realpath($destination);
+        $testPath = $isFile ? dirname($destination) : $destination;
+
+        if (!is_dir($testPath)) {
+            mkdir($testPath, 0777, true);
+        }
+
+        return $isFile
+            ? realpath(dirname($destination)) . '/' . basename($destination)
+            : realpath($destination);
     }
 }
