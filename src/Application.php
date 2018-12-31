@@ -76,7 +76,7 @@ class Application
         $this->fileParserFactory = new FileParserFactory;
         $this->pages = $this->findPages();
         $this->plates = new \League\Plates\Engine($this->getPagesPath());
-        $this->plates->addFolder('layouts', $this->getResourcesPath() . '/layouts');
+        $this->plates->addFolder('partials', $this->getResourcesPath() . '/partials');
 
         if (isset($options['noRun']) && true === $options['noRun']) {
             return;
