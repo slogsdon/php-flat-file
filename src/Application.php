@@ -50,11 +50,19 @@ class Application
     private $fileParserFactory;
 
     /**
+     * Template engine
+     *
+     * @var \League\Plates\Engine
+     */
+    private $plates;
+
+    /**
      * Create a new application instance
      *
      * ### Options
      *
-     * - `pagesPage` - Preferred directory containing site pages
+     * - `pagesPath` - Preferred directory containing site pages
+     * - `resourcesPath` - Preferred directory containing site resources
      * - `requestUri` - Fallback request URI when `$_SERVER['REQUEST_URI']`
      *     is not set
      * - `noRun` - Skip default output of page matching `requestUri`
@@ -67,8 +75,9 @@ class Application
         $this->files = new Files;
         $this->fileParserFactory = new FileParserFactory;
         $this->pages = $this->findPages();
+        $this->plates = new \League\Plates\Engine($this->getPagesPath());
+        $this->plates->addFolder('layouts', $this->getResourcesPath() . '/layouts');
 
-        // QUESTION: Should this be inverted?
         if (isset($options['noRun']) && true === $options['noRun']) {
             return;
         }
@@ -87,7 +96,7 @@ class Application
     public function findPages(): array
     {
         $foundPages = [];
-        $root = realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
+        $root = $this->getPagesPath();
 
         if ($root) {
             $root .=  '/';
@@ -104,6 +113,16 @@ class Application
         }
 
         return $foundPages;
+    }
+
+    protected function getPagesPath(): string
+    {
+        return realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
+    }
+
+    protected function getResourcesPath(): string
+    {
+        return realpath($this->getOption('resourcesPath') ?: getcwd() . '/resources');
     }
 
     /**
@@ -167,7 +186,7 @@ class Application
     {
         $parser = $this->fileParserFactory->createFrom($file);
         return function () use ($parser, $file) {
-            return $parser->parse($file);
+            return $parser->parse($file, $this->plates);
         };
     }
 
