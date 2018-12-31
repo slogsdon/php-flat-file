@@ -162,7 +162,9 @@ class Application
         list($status, $content) = $result;
         http_response_code($status);
         $this->logAccess();
-        print $content->content;
+        if (isset($content) && is_object($content)) {
+            print $content->content;
+        }
     }
 
     public static function resolveRouter(): string
