@@ -75,8 +75,7 @@ class Application
         $this->files = new Files;
         $this->fileParserFactory = new FileParserFactory;
         $this->pages = $this->findPages();
-        $this->plates = new \League\Plates\Engine($this->getPagesPath());
-        $this->plates->addFolder('partials', $this->getResourcesPath() . '/partials');
+        $this->prepareTemplates();
 
         if (isset($options['noRun']) && true === $options['noRun']) {
             return;
@@ -85,6 +84,20 @@ class Application
         $this->outputResult(
             $this->getRequestedContent()
         );
+    }
+
+    public function prepareTemplates(): void
+    {
+        $pagesPath = $this->getPagesPath();
+        $resourcesPath = $this->getResourcesPath();
+
+        if (!is_bool($pagesPath)) {
+            $this->plates = new \League\Plates\Engine($pagesPath);
+        }
+
+        if ($this->plates !== null && !is_bool($resourcesPath)) {
+            $this->plates->addFolder('partials', $resourcesPath . '/partials');
+        }
     }
 
     /**
@@ -115,12 +128,18 @@ class Application
         return $foundPages;
     }
 
-    protected function getPagesPath(): string
+    /**
+     * @return string|boolean
+     */
+    protected function getPagesPath()
     {
         return realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
     }
 
-    protected function getResourcesPath(): string
+    /**
+     * @return string|boolean
+     */
+    protected function getResourcesPath()
     {
         return realpath($this->getOption('resourcesPath') ?: getcwd() . '/resources');
     }
@@ -162,7 +181,7 @@ class Application
         list($status, $content) = $result;
         http_response_code($status);
         $this->logAccess();
-        if (isset($content) && is_object($content)) {
+        if (isset($content) && $content instanceof FileParser\ParsedFile) {
             print $content->content;
         }
     }

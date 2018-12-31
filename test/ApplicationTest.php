@@ -58,20 +58,11 @@ class ApplicationTest extends TestCase
     public function testPhpEchoContent()
     {
         $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
+        $this->app->prepareTemplates();
         $pages = $this->app->findPages();
         $this->assertNotEquals([], $pages);
 
         $body = $pages['echos-content']->content->call($this->app);
-        $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
-    }
-
-    public function testPhpReturnContent()
-    {
-        $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
-        $pages = $this->app->findPages();
-        $this->assertNotEquals([], $pages);
-
-        $body = $pages['returns-content']->content->call($this->app);
         $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 

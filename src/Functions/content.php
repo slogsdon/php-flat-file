@@ -4,8 +4,9 @@ namespace FlatFile\Functions;
 
 use League\CommonMark\CommonMarkConverter;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
+use FlatFile\FileParser\ParsedFile;
 
-function markdown(string $markdown)
+function markdown(string $markdown): ParsedFile
 {
     static $converter;
     if (!$converter) {
@@ -13,8 +14,8 @@ function markdown(string $markdown)
     }
 
     $content = YamlFrontMatter::parse($markdown);
-    return (object)[
-        'content' => $converter->convertToHtml($content->body()),
-        'meta' => $content->matter(),
-    ];
+    $result = new ParsedFile;
+    $result->content = $converter->convertToHtml($content->body());
+    $result->meta = $content->matter();
+    return $result;
 }
