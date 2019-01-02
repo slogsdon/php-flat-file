@@ -19,7 +19,7 @@ function markdown(string $markdown): ParsedFile
         $environment->addBlockRenderer(FencedCode::class, new FencedCodeRenderer([]));
         $environment->addBlockRenderer(IndentedCode::class, new IndentedCodeRenderer([]));
 
-        $commonMarkConverter = new CommonMarkConverter([], $environment);
+        $converter = new CommonMarkConverter([], $environment);
     }
 
     $content = YamlFrontMatter::parse($markdown);
