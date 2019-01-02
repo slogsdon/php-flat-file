@@ -2,7 +2,12 @@
 
 namespace FlatFile\Functions;
 
+use League\CommonMark\Block\Element\FencedCode;
+use League\CommonMark\Block\Element\IndentedCode;
 use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment;
+use Spatie\CommonMarkHighlighter\FencedCodeRenderer;
+use Spatie\CommonMarkHighlighter\IndentedCodeRenderer;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use FlatFile\FileParser\ParsedFile;
 
@@ -10,7 +15,11 @@ function markdown(string $markdown): ParsedFile
 {
     static $converter;
     if (!$converter) {
-        $converter = new CommonMarkConverter();
+        $environment = Environment::createCommonMarkEnvironment();
+        $environment->addBlockRenderer(FencedCode::class, new FencedCodeRenderer([]));
+        $environment->addBlockRenderer(IndentedCode::class, new IndentedCodeRenderer([]));
+
+        $commonMarkConverter = new CommonMarkConverter([], $environment);
     }
 
     $content = YamlFrontMatter::parse($markdown);
