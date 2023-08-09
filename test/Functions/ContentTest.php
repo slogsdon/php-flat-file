@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ContentTest extends TestCase
 {
-    public function testMarkdownSucceeds()
+    public function testMarkdownSucceeds(): void
     {
         $expected = "<h1>hello</h1>\n";
         $actual = markdown('# hello')->content;

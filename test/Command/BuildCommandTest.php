@@ -9,7 +9,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class BuildCommandTest extends TestCase
 {
-    public function testCommandRuns()
+    public function testCommandRuns(): void
     {
         $application = new Application;
 
@@ -24,6 +24,6 @@ class BuildCommandTest extends TestCase
         // the output of the command in the console
         $output = $commandTester->getDisplay();
 
-        $this->assertNotContains('Exception', $output);
+        $this->assertStringNotContainsStringIgnoringCase('Exception', $output);
     }
 }

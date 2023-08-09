@@ -6,5 +6,8 @@ interface FileParserInterface
 {
     public function canParse(\SplFileInfo $file): bool;
     public function parse(\SplFileInfo $file, \League\Plates\Engine $plates = null): ParsedFile;
+    /**
+     * @return array<string>
+     */
     public function supportedFileExtensions(): array;
 }

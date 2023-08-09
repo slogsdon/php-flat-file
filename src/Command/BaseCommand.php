@@ -20,7 +20,7 @@ abstract class BaseCommand extends Command
     /** @var string */
     protected $help = '';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName($this->name)
@@ -29,9 +29,10 @@ abstract class BaseCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
         $this->output = $output;
+        return 0;
     }
 }

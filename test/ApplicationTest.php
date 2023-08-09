@@ -17,30 +17,30 @@ class ApplicationTest extends TestCase
     /** @var Application */
     protected $app;
 
-    public function setup()
+    public function setup(): void
     {
         $this->app = new Application(['noRun' => true]);
     }
 
-    public function testResolveRouter()
+    public function testResolveRouter(): void
     {
         $expected = realpath(__DIR__ . '/../src/router.php');
         $this->assertEquals($expected, $this->app->resolveRouter());
     }
 
-    public function testGetOption()
+    public function testGetOption(): void
     {
         $this->assertEquals(true, true === $this->app->getOption('noRun'));
     }
 
-    public function testSetOption()
+    public function testSetOption(): void
     {
         $value = 'foo';
         $this->app->setOption('bar', $value);
         $this->assertEquals($value, $this->app->getOption('bar'));
     }
 
-    public function testFindPages()
+    public function testFindPages(): void
     {
         $this->assertEquals([], $this->app->findPages());
 
@@ -48,14 +48,14 @@ class ApplicationTest extends TestCase
         $this->assertNotEquals([], $this->app->findPages());
     }
 
-    public function testGetContentFor()
+    public function testGetContentFor(): void
     {
         list($status, $body) = $this->app->getContentFor('/');
         $this->assertEquals(404, $status);
         $this->assertEquals('not found', $body);
     }
 
-    public function testPhpEchoContent()
+    public function testPhpEchoContent(): void
     {
         $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
         $this->app->prepareTemplates();
@@ -66,7 +66,7 @@ class ApplicationTest extends TestCase
         $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 
-    public function testMarkdownContent()
+    public function testMarkdownContent(): void
     {
         $this->app->setOption(static::APP_OPTION_PAGES_PATH, __DIR__ . static::FIXTURES_PATH_SITE);
         $pages = $this->app->findPages();

@@ -20,6 +20,9 @@ class MarkdownFileParser extends FileParserAbstract
         return $result;
     }
 
+    /**
+     * @return array<string>
+     */
     public function supportedFileExtensions(): array
     {
         return ['md', 'markdown'];

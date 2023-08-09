@@ -14,7 +14,7 @@ class ServeCommand extends BaseCommand
     /** @var string */
     protected $description = 'Serves the site';
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
@@ -42,19 +42,21 @@ class ServeCommand extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
+        $resultCode = 0;
         $command = $this->buildCommand();
 
         if ($this->input->getOption('dry-run')) {
             $this->output->writeln($command);
-            return;
+            return $resultCode;
         }
 
         $this->outputBanner();
-        passthru($command);
+        passthru($command, $resultCode);
+        return $resultCode;
     }
 
     protected function buildCommand(): string
@@ -88,12 +90,20 @@ class ServeCommand extends BaseCommand
 
     protected function getHost(): string
     {
-        return $this->input->getOption('host');
+        $result = $this->input->getOption('host');
+        if (is_string($result)) {
+            return (string)$result;
+        }
+        return "";
     }
 
     protected function getPort(): string
     {
-        return $this->input->getOption('port');
+        $result = $this->input->getOption('port');
+        if (is_string($result)) {
+            return (string)$result;
+        }
+        return "";
     }
 
     protected function getRoot(): string
@@ -106,7 +116,7 @@ class ServeCommand extends BaseCommand
         return Application::resolveRouter();
     }
 
-    protected function outputBanner()
+    protected function outputBanner(): void
     {
         $datetime = date(Application::DATETIME_FORMAT);
         $this->output->writeln(sprintf(

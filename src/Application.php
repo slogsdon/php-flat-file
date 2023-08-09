@@ -24,14 +24,14 @@ class Application
     /**
      * Current instance options
      *
-     * @var array
+     * @var array<string, string|bool>
      */
     private $options;
 
     /**
      * Application's discovered page objects
      *
-     * @var array
+     * @var array<\stdClass>
      */
     private $pages;
 
@@ -67,7 +67,7 @@ class Application
      *     is not set
      * - `noRun` - Skip default output of page matching `requestUri`
      *
-     * @param array $options See above for available options
+     * @param array<string, string|bool> $options See above for available options
      */
     public function __construct(array $options = [])
     {
@@ -104,7 +104,7 @@ class Application
      * Produces array of page objects from discovered pages,
      * indexed by slug
      *
-     * @return array
+     * @return array<\stdClass>
      */
     public function findPages(): array
     {
@@ -133,7 +133,11 @@ class Application
      */
     protected function getPagesPath()
     {
-        return realpath($this->getOption('pagesPath') ?: getcwd() . '/pages');
+        $option = $this->getOption('pagesPath');
+        if (!is_string($option)) {
+            $option = '';
+        }
+        return realpath($option ?: getcwd() . '/pages');
     }
 
     /**
@@ -141,7 +145,11 @@ class Application
      */
     protected function getResourcesPath()
     {
-        return realpath($this->getOption('resourcesPath') ?: getcwd() . '/resources');
+        $option = $this->getOption('resourcesPath');
+        if (!is_string($option)) {
+            $option = '';
+        }
+        return realpath($option ?: getcwd() . '/resources');
     }
 
     /**
@@ -149,7 +157,8 @@ class Application
      * result for supplied `$slug`
      *
      * @param string $slug Desired page slug to retrieve
-     * @return array
+     *
+     * @return array<int|string|FileParser\ParsedFile|null>
      */
     public function getContentFor(string $slug): array
     {
@@ -157,6 +166,9 @@ class Application
         return $this->getRequestedContent();
     }
 
+    /**
+     * @return array<int|string|FileParser\ParsedFile|null>
+     */
     public function getRequestedContent(): array
     {
         $rawUri =
@@ -176,13 +188,20 @@ class Application
         return [404, 'not found'];
     }
 
+    /**
+     * @param array<int|string|FileParser\ParsedFile|null> $result
+     */
     public function outputResult(array $result): void
     {
         list($status, $content) = $result;
-        http_response_code($status);
+        if (is_int($status)) {
+            http_response_code($status);
+        }
         $this->logAccess();
         if (isset($content) && $content instanceof FileParser\ParsedFile) {
             print $content->content;
+        } elseif (isset($content) && is_string($content)) {
+            print $content;
         }
     }
 
@@ -197,13 +216,13 @@ class Application
         return __DIR__ . '/router.php';
     }
 
-    public function setOption(string $key, $value): self
+    public function setOption(string $key, string|bool $value): self
     {
         $this->options[$key] = $value;
         return $this;
     }
 
-    protected function buildContentFunction(\SplFileInfo $file)
+    protected function buildContentFunction(\SplFileInfo $file): callable
     {
         $parser = $this->fileParserFactory->createFrom($file);
         return function () use ($parser, $file) {
@@ -211,12 +230,17 @@ class Application
         };
     }
 
+    /**
+     * @param string $root
+     *
+     * @return iterable<\SplFileInfo>
+     */
     protected function generatePageFiles(string $root): iterable
     {
         yield from $this->files->findAll($root);
     }
 
-    public function getOption(string $key)
+    public function getOption(string $key): string|bool|null
     {
         return isset($this->options[$key]) ? $this->options[$key] : null;
     }
@@ -230,7 +254,7 @@ class Application
         ), '/');
     }
 
-    protected function logAccess()
+    protected function logAccess(): void
     {
         $remoteAddr = $_SERVER['REMOTE_ADDR'];
         $remotePort = $_SERVER['REMOTE_PORT'];

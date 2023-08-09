@@ -11,9 +11,12 @@ use FlatFile\FileParser\PhpFileParser;
  */
 class FileParserFactory
 {
-    /** @var array */
+    /** @var array<FileParserInterface> */
     private $parsers;
 
+    /**
+     * @param array<FileParserInterface> $parsers
+     */
     public function __construct(array $parsers = [])
     {
         if (empty($parsers)) {
@@ -34,6 +37,9 @@ class FileParserFactory
         throw new \Exception('Unsupported file type');
     }
 
+    /**
+     * @return array<FileParserInterface>
+     */
     public function getDefaultParsers(): array
     {
         return [
