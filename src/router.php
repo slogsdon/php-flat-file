@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 
 $uri = $_SERVER['REQUEST_URI'];
+$cwd = (string)getcwd();
 
-if ($uri !== '/' && file_exists(getcwd() . '/public' . $uri)) {
+if (is_string($uri) && $uri !== '/' && file_exists($cwd . '/public' . $uri)) {
     return false;
 }
 
-require getcwd() . '/vendor/autoload.php';
+require $cwd . '/vendor/autoload.php';
 new FlatFile\Application;

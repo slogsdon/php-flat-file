@@ -11,9 +11,8 @@ class FilesTest extends TestCase
     {
         $cwd = getcwd();
 
-        if (false === $cwd) {
-            $this->assertTrue(false, 'Something bad has happened');
-            return;
+        if ($cwd === false) {
+            $this->fail('Could not get current working directory');
         }
 
         $files = $this->generatorToArray((new Files)->findAll($cwd));

@@ -31,7 +31,7 @@ class Application
     /**
      * Application's discovered page objects
      *
-     * @var array<\stdClass>
+     * @var array<Page>
      */
     private $pages;
 
@@ -104,7 +104,7 @@ class Application
      * Produces array of page objects from discovered pages,
      * indexed by slug
      *
-     * @return array<\stdClass>
+     * @return array<Page>
      */
     public function findPages(): array
     {
@@ -116,12 +116,12 @@ class Application
 
             foreach ($this->generatePageFiles($root) as $file) {
                 $slug = $this->getSlug($root, $file);
-                $foundPages[$slug] = (object)[
-                    'info'=> $file,
-                    'content' => $this->buildContentFunction($file),
-                    'slug' => $slug,
-                    'depth' => count(explode('/', $slug)),
-                ];
+                $foundPages[$slug] = new Page(
+                    $file,
+                    $this->buildContentFunction($file),
+                    $slug,
+                    count(explode('/', $slug))
+                );
             }
         }
 
@@ -167,7 +167,7 @@ class Application
     }
 
     /**
-     * @return array<int|string|FileParser\ParsedFile|null>
+     * @return array{0: int, 1: FileParser\ParsedFile|string}
      */
     public function getRequestedContent(): array
     {
@@ -175,14 +175,23 @@ class Application
             isset($_SERVER[static::SERVER_REQUEST_URI])
             ? $_SERVER[static::SERVER_REQUEST_URI]
             : $this->getOption('requestUri');
+        if (!is_string($rawUri)) {
+            $rawUri = '/';
+        }
         $requestUri = trim($rawUri, '/');
 
         if (isset($this->pages[$requestUri])) {
-            return [200, $this->pages[$requestUri]->content->call($this)];
+            $content = $this->pages[$requestUri]->content;
+            /** @var FileParser\ParsedFile $result */
+            $result = ($content)();
+            return [200, $result];
         }
 
         if ($requestUri === '' && isset($this->pages['index'])) {
-            return [200, $this->pages['index']->content->call($this)];
+            $content = $this->pages['index']->content;
+            /** @var FileParser\ParsedFile $result */
+            $result = ($content)();
+            return [200, $result];
         }
 
         return [404, 'not found'];
@@ -256,17 +265,19 @@ class Application
 
     protected function logAccess(): void
     {
-        $remoteAddr = $_SERVER['REMOTE_ADDR'];
-        $remotePort = $_SERVER['REMOTE_PORT'];
+        $remoteAddr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+        $remotePort = isset($_SERVER['REMOTE_PORT']) ? $_SERVER['REMOTE_PORT'] : '';
         $status = http_response_code();
-        $requestUri = $_SERVER[static::SERVER_REQUEST_URI];
+        $requestUri = isset($_SERVER[static::SERVER_REQUEST_URI])
+            ? $_SERVER[static::SERVER_REQUEST_URI]
+            : '';
 
         error_log(sprintf(
             '%s:%s [%s]: %s',
-            $remoteAddr,
-            $remotePort,
+            is_string($remoteAddr) ? $remoteAddr : '',
+            is_string($remotePort) ? $remotePort : '',
             $status,
-            $requestUri
+            is_string($requestUri) ? $requestUri : ''
         ));
     }
 }

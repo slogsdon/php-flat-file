@@ -62,7 +62,9 @@ class ApplicationTest extends TestCase
         $pages = $this->app->findPages();
         $this->assertNotEquals([], $pages);
 
-        $body = $pages['echos-content']->content->call($this->app);
+        $content = $pages['echos-content']->content;
+        $body = $content($this->app);
+        assert($body instanceof \FlatFile\FileParser\ParsedFile);
         $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 
@@ -72,7 +74,9 @@ class ApplicationTest extends TestCase
         $pages = $this->app->findPages();
         $this->assertNotEquals([], $pages);
 
-        $body = $pages['markdown-content']->content->call($this->app);
+        $content = $pages['markdown-content']->content;
+        $body = $content($this->app);
+        assert($body instanceof \FlatFile\FileParser\ParsedFile);
         $this->assertEquals(static::EXPECTED_CONTENT, $body->content);
     }
 }

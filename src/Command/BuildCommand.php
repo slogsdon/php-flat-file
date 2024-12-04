@@ -5,6 +5,7 @@ namespace FlatFile\Command;
 use FlatFile\Application;
 use FlatFile\FileParser\ParsedFile;
 use FlatFile\Files;
+use FlatFile\Page;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,7 +23,7 @@ class BuildCommand extends BaseCommand
 
     /** @var Application */
     protected $app;
-    /** @var array<\stdClass> */
+    /** @var array<Page> */
     protected $pages;
 
     protected function configure(): void
@@ -69,15 +70,16 @@ class BuildCommand extends BaseCommand
         $this->output->writeln('Generating files...');
 
         foreach ($this->pages as $page) {
-            if ($page->slug === 'index') {
-                $page->slug = '';
+            $slug = (string)$page->slug;
+            if ($slug === 'index') {
+                $slug = '';
             }
 
-            list(,$content) = $this->app->getContentFor($page->slug);
+            list(,$content) = $this->app->getContentFor($slug);
             $localDest = sprintf(
                 '%s/%s',
                 $this->getDestination(),
-                $page->slug
+                $slug
             );
 
             if (!is_dir($localDest)) {

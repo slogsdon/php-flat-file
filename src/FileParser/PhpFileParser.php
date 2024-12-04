@@ -4,7 +4,7 @@ namespace FlatFile\FileParser;
 
 class PhpFileParser extends FileParserAbstract
 {
-    public function parse(\SplFileInfo $file, \League\Plates\Engine $plates = null): ParsedFile
+    public function parse(\SplFileInfo $file, ?\League\Plates\Engine $plates = null): ParsedFile
     {
         $result = new ParsedFile;
         $result->content =
