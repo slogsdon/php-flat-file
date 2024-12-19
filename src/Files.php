@@ -16,7 +16,8 @@ class Files
         /** @var iterable<\SplFileInfo> */
         $fileIterator = new \RegexIterator($ite, '/[^\/]*/');
         foreach ($fileIterator as $file) {
-            if ($file->getFileName() === '.' || $file->getFileName() === '..') {
+            $ignores = ['.','..','.DS_Store'];
+            if (in_array($file->getFileName(), $ignores)) {
                 continue;
             }
             yield $file;
