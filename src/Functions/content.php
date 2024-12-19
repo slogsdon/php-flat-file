@@ -14,15 +14,11 @@ use FlatFile\FileParser\ParsedFile;
 
 function markdown(string $markdown): ParsedFile
 {
-    /** @var MarkdownConverter|null $converter */
-    static $converter;
-    if (!$converter) {
-        $environment = new Environment([]);
-        $environment->addRenderer(FencedCode::class, new FencedCodeRenderer([]));
-        $environment->addRenderer(IndentedCode::class, new IndentedCodeRenderer([]));
-        $environment->addExtension(new CommonMarkCoreExtension());
-        $converter = new MarkdownConverter($environment);
-    }
+    $environment = new Environment([]);
+    $environment->addRenderer(FencedCode::class, new FencedCodeRenderer([]));
+    $environment->addRenderer(IndentedCode::class, new IndentedCodeRenderer([]));
+    $environment->addExtension(new CommonMarkCoreExtension());
+    $converter = new MarkdownConverter($environment);
 
     $content = YamlFrontMatter::parse($markdown);
     $result = new ParsedFile;
