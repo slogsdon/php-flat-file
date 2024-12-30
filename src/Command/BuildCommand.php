@@ -76,15 +76,6 @@ class BuildCommand extends BaseCommand
             }
 
             list(,$content) = $this->app->getContentFor($slug);
-            $localDest = sprintf(
-                '%s/%s',
-                $this->getDestination(),
-                $slug
-            );
-
-            if (!is_dir($localDest)) {
-                mkdir($localDest, 0777, true);
-            }
 
             $output = '';
             if ($content instanceof ParsedFile) {
@@ -93,7 +84,24 @@ class BuildCommand extends BaseCommand
                 $output = $content;
             }
 
-            file_put_contents($localDest . '/index.html', $output);
+            $extension = '/index.html';
+            $targetExtension = pathinfo($slug, PATHINFO_EXTENSION);
+            $localDest = sprintf(
+                '%s/%s',
+                $this->getDestination(),
+                $slug
+            );
+
+            if (!empty($targetExtension)) {
+                $extension = sprintf('/%s', pathinfo($slug, PATHINFO_BASENAME));
+                $localDest = pathinfo($localDest, PATHINFO_DIRNAME);
+            }
+
+            if (!is_dir($localDest)) {
+                mkdir($localDest, 0777, true);
+            }
+
+            file_put_contents($localDest . $extension, $output);
         }
 
         return $this;
