@@ -1,3 +1,5 @@
+> **[shane.logsdon.io](https://shane.logsdon.io)** — writing and projects on agentic workflows, web standards, and payments engineering.
+
 # flat-file
 
 [![Latest Stable Version](https://poser.pugx.org/slogsdon/flat-file/v/stable)](https://packagist.org/packages/slogsdon/flat-file)
