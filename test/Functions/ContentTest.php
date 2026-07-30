@@ -13,4 +13,12 @@ class ContentTest extends TestCase
         $actual = markdown('# hello')->content;
         $this->assertEquals($expected, $actual);
     }
+
+    public function testMarkdownRendersTables(): void
+    {
+        $actual = markdown("| a | b |\n|---|---|\n| 1 | 2 |")->content;
+        $this->assertStringContainsString('<table>', $actual);
+        $this->assertStringContainsString('<th>a</th>', $actual);
+        $this->assertStringContainsString('<td>1</td>', $actual);
+    }
 }
