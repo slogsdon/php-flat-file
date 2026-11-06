@@ -1,0 +1,8 @@
+{
+  "slug": "flat-file",
+  "name": "flat-file",
+  "origin": "https://projects.logsdon.io",
+  "description": "A small PHP static-site generator and flat-file CMS: pages are files, routes are file paths, and one command exports plain HTML.",
+  "lastmod": "2026-05-08",
+  "source": "https://github.com/slogsdon/php-flat-file"
+}
