@@ -178,17 +178,24 @@ macOS. Proving the quick start used a throwaway project at
 - The custom entrypoint (`public/index.php`) quoted on the page — from the README
   ("Using a Custom Entrypoint"). Read, not exercised; this microsite uses the
   default router.
-- Flat-file CMS mode, i.e. serving `pages/` live from a PHP web server with the web
+- The flat-file CMS mode, i.e. serving `pages/` live from a PHP web server with the web
   root at `public/` — from the README ("Running as a Flat-File CMS"). Not exercised.
 - `$this->insert('partials::nav')` for shared partials — Plates API, mentioned on
   the page as not exercised.
-- Deployment of any kind: no `cf deploy`, no `cf previews deploy`, no Cloudflare API
-  call. The two `cf build` modes only produce a local artifact.
 
 ## Deployment
 
-Not performed from this repository. Publication is the collection's own step and
-runs through the hub's workflow; this repository only produces the artifact and the
-Worker configuration. The hub owns the hostname (`projects.logsdon.io`), the sitemap
-index, and the slashless redirect; this Worker claims only
-`projects.logsdon.io/flat-file/*`.
+Published 2026-11-09 with a manual deploy from this directory. There is no Workers
+Builds connection yet, so a content change needs the same steps:
+
+```sh
+npm ci
+npm run build:production
+npx --no-install cf build --mode microsite-production
+npx --no-install cf deploy --prebuilt --mode microsite-production
+```
+
+Before going live, the site was checked on a noindex Worker Preview from
+`npx --no-install cf previews deploy microsite --mode microsite`. The hub owns the
+hostname (`projects.logsdon.io`), the sitemap index, and the slashless redirect;
+this Worker claims only `projects.logsdon.io/flat-file/*`.

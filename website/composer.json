@@ -1,6 +1,6 @@
 {
     "name": "slogsdon/flat-file-microsite",
-    "description": "Microsite for Flat-file",
+    "description": "Microsite for flat-file",
     "license": "MIT",
     "require": {
         "php": ">=8.3",
